@@ -1,0 +1,7 @@
+fastapi
+uvicorn
+scikit-learn
+sentence-transformers
+pdfminer.six
+psycopg2-binary
+python-multipart
