@@ -13,4 +13,5 @@ class Submission(Base):
     semantic_score = Column(Float)
     missing_skills = Column(ARRAY(String))
     created_at = Column(DateTime, default=datetime.utcnow)
+    role_type = Column(String, default="general")
     
