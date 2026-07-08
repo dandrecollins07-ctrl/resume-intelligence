@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { getScoreColor } from './utils/scoreColors';
+import AnalyticsDashboard from "./components/AnalyticsDashboard";
 
 function App() {
   const [jdText, setJdText] = useState('');
@@ -35,7 +36,7 @@ function App() {
 
       <button onClick={handleSubmit}>Test</button>
 
-      {/* Only render this block once result is populated — 
+      {/* Only render this block once result is populated —
           reading result.keyword before that would crash on null */}
       {result && (
         <div>

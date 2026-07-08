@@ -9,6 +9,7 @@ from models import Submission
 from sqlalchemy.orm import Session
 from sqlalchemy import text
 from database import get_db
+from sqlalchemy import func
 
 router = APIRouter()
 
@@ -32,3 +33,22 @@ def request_score(resume: UploadFile = File(...), job_description: str = Form(..
     db.close()
 
     return {"keyword": keyword_result, "semantic": semantic_result}
+
+@router.get("/analytics")
+def get_analytics():
+    db = SessionLocal()
+    day = func.date_trunc('day', Submission.created_at)
+    trend = db.query(
+        day.label("day"),
+        func.avg(Submission.keyword_score),
+        func.avg(Submission.semantic_score)
+    ).group_by(day).order_by(day).all()
+    trend_data = []
+    for day, avg_kw, avg_sem in trend:
+        trend_data.append({
+            "day": day.strftime("%Y-%m-%d"),
+            "avg_kw": avg_kw,
+            "avg_sem": avg_sem,
+        })
+    db.close()
+    return {"score_trend": trend_data, "top_missing_skills": []}
