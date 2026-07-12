@@ -8,12 +8,6 @@ dist/
 build/
 .env
 
-# Python
-venv/
-__pycache__/
-*.pyc
-.env
-
 # Editor/OS
 .vscode/
 .DS_Store

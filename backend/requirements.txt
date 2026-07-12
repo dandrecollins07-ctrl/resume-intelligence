@@ -5,3 +5,5 @@ sentence-transformers
 pdfminer.six
 psycopg2-binary
 python-multipart
+python-dotenv
+sqlalchemy
