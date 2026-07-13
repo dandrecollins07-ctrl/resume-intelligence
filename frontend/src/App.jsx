@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { getScoreColor } from './utils/scoreColors';
 import AnalyticsDashboard from "./components/AnalyticsDashboard";
+const API_URL = import.meta.env.VITE_API_URL;
 
 function App() {
   const [jdText, setJdText] = useState('');
@@ -12,7 +13,7 @@ function App() {
     formData.append("resume", resumeFile);
     formData.append("job_description", jdText);
 
-    const response = await fetch("http://localhost:8000/score", {
+    const response = await fetch(`${API_URL}/score`, {
       method: "POST",
       body: formData,
     });

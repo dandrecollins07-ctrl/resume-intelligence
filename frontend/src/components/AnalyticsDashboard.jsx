@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import Chart from "chart.js/auto";
+const API_URL = import.meta.env.VITE_API_URL;
 
 function AnalyticsDashboard() {
   const [data, setData] = useState(null);
@@ -9,7 +10,7 @@ function AnalyticsDashboard() {
   const chartInstance = useRef(null);
 
   useEffect(() => {
-    fetch("http://localhost:8000/analytics")
+    fetch(`${API_URL}/analytics`)
       .then((res) => {
         if (!res.ok) throw new Error("Failed to fetch analytics");
         return res.json();
