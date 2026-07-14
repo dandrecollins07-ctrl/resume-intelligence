@@ -1,15 +1,13 @@
 from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.metrics.pairwise import cosine_similarity
-from sentence_transformers import SentenceTransformer
-
-# Fit the vectorizer on both texts together as a list
+from fastembed import TextEmbedding
+import numpy as np
 
 _model = None
 
 def get_model():
     global _model
     if _model is None:
-        _model = SentenceTransformer('all-MiniLM-L6-v2')
+        _model = TextEmbedding(model_name="BAAI/bge-small-en-v1.5")
     return _model
 
 
@@ -29,7 +27,7 @@ def keyword_score(resume_text, job_description):
 
 def semantic_score(resume_text, job_description):
     model = get_model()
-    resume_vector = model.encode(resume_text)
-    jd_vector = model.encode(job_description)
-    score = cosine_similarity([resume_vector], [jd_vector])
-    return float(score[0][0])
+    embeddings = list(model.embed([resume_text, job_description]))
+    resume_vec, jd_vec = embeddings[0], embeddings[1]
+    score = np.dot(resume_vec, jd_vec) / (np.linalg.norm(resume_vec) * np.linalg.norm(jd_vec))
+    return float(score)
