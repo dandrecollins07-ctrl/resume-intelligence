@@ -12,7 +12,7 @@ def get_model():
 
 
 def keyword_score(resume_text, job_description):
-    vectorizer = TfidfVectorizer()
+    vectorizer = TfidfVectorizer(stop_words='english')
     matrix = vectorizer.fit_transform([resume_text, job_description])
     words = vectorizer.get_feature_names_out()
     resume = matrix.toarray()[0]
