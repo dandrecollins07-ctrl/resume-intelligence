@@ -2,6 +2,7 @@ from pydantic import BaseModel
 from fastapi import APIRouter, Depends, UploadFile, File, Form
 from pdfminer.high_level import extract_text
 import io
+from collections import Counter
 from services.scorer import keyword_score
 from services.scorer import semantic_score
 from database import SessionLocal
@@ -26,7 +27,8 @@ def request_score(resume: UploadFile = File(...), job_description: str = Form(..
         resume_text=resume_text,
         jd_text=job_description,
         keyword_score=keyword_result["match_percent"],
-        semantic_score=semantic_result
+        semantic_score=semantic_result,
+        missing_skills=keyword_result["missing_keywords"]
     )
     db.add(submission)
     db.commit()
@@ -50,5 +52,13 @@ def get_analytics():
             "avg_kw": avg_kw,
             "avg_sem": avg_sem,
         })
+
+    all_missing = db.query(Submission.missing_skills).all()
+    counter = Counter()
+    for (skills,) in all_missing:
+        if skills:
+            counter.update(skills)
+    top_missing = [{"skill": s, "count": c} for s, c in counter.most_common(10)]
+
     db.close()
-    return {"score_trend": trend_data, "top_missing_skills": []}
+    return {"score_trend": trend_data, "top_missing_skills": top_missing}
