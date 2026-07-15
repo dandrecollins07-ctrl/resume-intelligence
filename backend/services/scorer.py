@@ -11,17 +11,25 @@ def get_model():
     return _model
 
 
-def keyword_score(resume_text, job_description):
+def keyword_score(resume_text, job_description, corpus_jds):
+    # Fit on the full JD history + resume, so IDF reflects real-world word rarity
+    documents = corpus_jds + [resume_text]
     vectorizer = TfidfVectorizer(stop_words='english')
-    matrix = vectorizer.fit_transform([resume_text, job_description])
+    matrix = vectorizer.fit_transform(documents)
     words = vectorizer.get_feature_names_out()
-    resume = matrix.toarray()[0]
-    jd = matrix.toarray()[1]
+
+    # current JD is the last item in corpus_jds; resume is the very last document
+    jd_index = len(corpus_jds) - 1
+    resume_index = len(documents) - 1
+
+    dense = matrix.toarray()
+    jd = dense[jd_index]
+    resume = dense[resume_index]
 
     missing_words = [word for i, word in enumerate(words) if jd[i] > 0 and resume[i] == 0]
 
     jd_words = [word for i, word in enumerate(words) if jd[i] > 0]
-    match_percent = (len(jd_words) - len(missing_words)) / len(jd_words) * 100
+    match_percent = (len(jd_words) - len(missing_words)) / len(jd_words) * 100 if jd_words else 0
     return {"match_percent": match_percent, "missing_keywords": missing_words}
 
 

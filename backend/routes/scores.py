@@ -19,10 +19,16 @@ def request_score(resume: UploadFile = File(...), job_description: str = Form(..
     resume_bytes = resume.file.read()
     resume_text = extract_text(io.BytesIO(resume_bytes))
 
-    keyword_result = keyword_score(resume_text, job_description)
+    db = SessionLocal()
+
+    # Pull every historical JD to build the growing corpus
+    past_jds = db.query(Submission.jd_text).all()
+    corpus_jds = [jd for (jd,) in past_jds]
+    corpus_jds.append(job_description)  # include current JD in the fit
+
+    keyword_result = keyword_score(resume_text, job_description, corpus_jds)
     semantic_result = semantic_score(resume_text, job_description)
 
-    db = SessionLocal()
     submission = Submission(
         resume_text=resume_text,
         jd_text=job_description,
