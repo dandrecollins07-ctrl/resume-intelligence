@@ -1,6 +1,7 @@
 // pages/ScorePage.jsx
 import { useState } from 'react';
 import { getScoreColor } from '../utils/scoreColors';
+import RoleClassificationPanel from '../components/RoleClassificationPanel';
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -82,6 +83,11 @@ function ScorePage() {
                   </span>
                 ))}
               </div>
+            </div>
+
+            <div>
+              <h3 className="text-sm text-[#9AA3AD] mb-2">Role Fit</h3>
+              <RoleClassificationPanel roleClassification={result.role_classification} />
             </div>
           </div>
         )}

@@ -5,6 +5,8 @@ import io
 from collections import Counter
 from services.scorer import keyword_score
 from services.scorer import semantic_score
+from services.scorer import skill_gap
+from services.scorer import role_classification
 from database import SessionLocal
 from models import Submission
 from sqlalchemy.orm import Session
@@ -28,6 +30,8 @@ def request_score(resume: UploadFile = File(...), job_description: str = Form(..
 
     keyword_result = keyword_score(resume_text, job_description, corpus_jds)
     semantic_result = semantic_score(resume_text, job_description)
+    skill_gap_result = skill_gap(resume_text, job_description)
+    role_result = role_classification(resume_text, job_description)
 
     submission = Submission(
         resume_text=resume_text,
@@ -40,7 +44,7 @@ def request_score(resume: UploadFile = File(...), job_description: str = Form(..
     db.commit()
     db.close()
 
-    return {"keyword": keyword_result, "semantic": semantic_result}
+    return {"keyword": keyword_result, "semantic": semantic_result, "skill_gap": skill_gap_result, "role_classification": role_result}
 
 @router.get("/analytics")
 def get_analytics():

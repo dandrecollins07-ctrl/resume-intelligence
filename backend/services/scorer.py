@@ -1,6 +1,8 @@
 from sklearn.feature_extraction.text import TfidfVectorizer
 from fastembed import TextEmbedding
 import numpy as np
+from services.skills import extract_skills
+from services.skill_taxonomy import classify_role
 
 _model = None
 
@@ -39,3 +41,22 @@ def semantic_score(resume_text, job_description):
     resume_vec, jd_vec = embeddings[0], embeddings[1]
     score = np.dot(resume_vec, jd_vec) / (np.linalg.norm(resume_vec) * np.linalg.norm(jd_vec))
     return float(score)
+
+def skill_gap(resume_text, job_description):
+    resume_skills = set(extract_skills(resume_text))
+    jd_skills = set(extract_skills(job_description))
+
+    matched_skills = sorted(resume_skills & jd_skills)
+    missing_skills = sorted(jd_skills - resume_skills)
+    extra_skills = sorted(resume_skills - jd_skills)
+
+    return {
+        "matched_skills": matched_skills,
+        "missing_skills": missing_skills,
+        "extra_skills": extra_skills,
+    }
+
+def role_classification(resume_text, job_description):
+    from services.skills import extract_skills
+    jd_skills = extract_skills(job_description)
+    return classify_role(jd_skills)
