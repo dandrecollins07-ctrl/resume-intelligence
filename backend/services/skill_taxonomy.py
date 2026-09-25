@@ -1,3 +1,4 @@
+from typing import List
 """
 Maps each tracked skill (from skills.py) to a single dominant role category:
 SWE, Data, Infra, or Analyst. Used to classify a JD's dominant role type
@@ -44,7 +45,7 @@ SKILL_ROLE_CATEGORIES = {
 }
 
 
-def classify_role(skills: list[str]) -> dict:
+def classify_role(skills: List[str]) -> dict:
     """
     Given a list of extracted skills, returns a count and percentage
     breakdown across SWE/Data/Infra/Analyst, plus the dominant category.
